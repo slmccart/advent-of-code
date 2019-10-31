@@ -1,4 +1,5 @@
 use std::cmp;
+use std::fs;
 
 struct Present {
     length: u32,
@@ -7,6 +8,7 @@ struct Present {
 }
 
 impl Present {
+    #[allow(dead_code)]
     fn volume(&self) -> u32 {
         self.length * self.width * self.height
     }
@@ -34,22 +36,20 @@ impl Present {
 }
 
 fn main() {
-    let present1 = Present { length: 2, width: 3, height: 4 };
-    let present2 = Present { length: 1, width: 1, height: 10 };
-    let present3 = Present::new("2x3x4");
+    let presents = read_input("input.txt");
+    let presents: Vec<&str> = presents.split('\n').collect();
 
-    println!("Volume of present1 is: {}", present1.volume());
-    println!("Surface area of present1 is: {}", present1.surface_area());
-    println!("Surface area of smallest side of present1 is: {}", present1.area_of_smallest_side());
-    println!("Amount of wrapping paper needed for present1 is: {}", present1.amount_of_wrapping_paper_needed());
+    let mut wrapping_paper_needed = 0;
 
-    println!("Volume of present2 is: {}", present2.volume());
-    println!("Surface area of present2 is: {}", present2.surface_area());
-    println!("Surface area of smallest side of present2 is: {}", present2.area_of_smallest_side());
-    println!("Amount of wrapping paper needed for present2 is: {}", present2.amount_of_wrapping_paper_needed());
+    for present in &presents {
+        wrapping_paper_needed += Present::new(present).amount_of_wrapping_paper_needed();
+    }
 
-    println!("Volume of present3 is: {}", present3.volume());
-    println!("Surface area of present3 is: {}", present3.surface_area());
-    println!("Surface area of smallest side of present3 is: {}", present3.area_of_smallest_side());
-    println!("Amount of wrapping paper needed for present3 is: {}", present3.amount_of_wrapping_paper_needed());
+    println!("I have {} presents!", presents.len());
+    println!("I need {} square feet of wrapping paper!", wrapping_paper_needed);
+}
+
+fn read_input(filename: &str) -> String {
+    fs::read_to_string(filename)
+        .expect("Something went wrong reading the file")
 }
