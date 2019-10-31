@@ -43,31 +43,21 @@ impl Present {
 }
 
 fn main() {
-    let present1 = Present::new("2x3x4");
-    let present2 = Present::new("1x1x10");
-
-    println!("Ribbon for present1 - Smallest side: {} - Bow: {} - Total: {}", 
-        present1.perimeter_of_smallest_side(), 
-        present1.volume(), 
-        present1.length_of_ribbon_needed());
-
-    println!("Ribbon for present2 - Smallest side: {} - Bow: {} - Total: {}", 
-        present2.perimeter_of_smallest_side(), 
-        present2.volume(), 
-        present2.length_of_ribbon_needed());
-
-
     let presents = read_input("input.txt");
     let presents: Vec<&str> = presents.split('\n').collect();
 
     let mut wrapping_paper_needed = 0;
+    let mut ribbon_needed = 0;
 
     for present in &presents {
-        wrapping_paper_needed += Present::new(present).amount_of_wrapping_paper_needed();
+        let present = Present::new(present);
+        wrapping_paper_needed += present.amount_of_wrapping_paper_needed();
+        ribbon_needed += present.length_of_ribbon_needed();
     }
 
     println!("I have {} presents!", presents.len());
     println!("I need {} square feet of wrapping paper!", wrapping_paper_needed);
+    println!("I need {} linear feet of ribbon!", ribbon_needed);
 }
 
 fn read_input(filename: &str) -> String {
