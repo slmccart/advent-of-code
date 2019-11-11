@@ -35,7 +35,7 @@ fn deliver_to_list_of_directions(list_of_directions: &str) -> HashMap<(i32, i32)
     for direction in list_of_directions.chars() {
         location = move_and_deliver_present(&mut map, location, direction);
     }
-    
+
     map
 }
 
