@@ -1,7 +1,7 @@
 use crypto::md5::Md5;
 use crypto::digest::Digest;
 
-pub fn find_smallest_number(input: &str, desired: &str) -> u64 {
+pub fn find_smallest_number(input: &str) -> u64 {
     let mut hasher = Md5::new();
 
     let key = input.as_bytes();
