@@ -75,39 +75,20 @@ fn contains_naughty_substring(s: &str) -> bool {
 }
 
 fn contains_two_independent_pairs(s: &str) -> bool {
-    // xxyxx
-    // Windows(2): xx xy yx xx
-    
+    println!("Independent pairs of {}", s);
     // aaa
     // Windows(2): aa aa
 
+    //Get an iterator of rolling Windows containing exactly 2 characters each
+    // xxyxx becomes xx xy yx xx
+    let characters = s.chars().collect::<Vec<char>>();
+    let windows = characters.windows(2);
 
     let mut pairs = HashMap::new();
 
-    //Chunk the original string into pairs of characters starting at position 0
-    // This will get the pairs that start at an even index
-    //   abcdef becomes ab cd ef
-    let characters = s.chars().collect::<Vec<char>>();
-    let chunks = characters.chunks_exact(2);
-
-    for chunk in chunks {
-        let pair = pairs.entry(chunk).or_insert(0);
-        *pair += 1;
-
-        if *pair == 2 { return true; }
-    }
-
-    //Reset HashMap for next pass through the string
-    pairs.clear();
-
-    //Now chunk the original string into pairs of characters starting at position 1
-    // This will get the pairs that start at an odd index
-    //   abcdef becomes bc de f
-    let characters = s[1..].chars().collect::<Vec<char>>();
-    let chunks = characters.chunks_exact(2);
-
-    for chunk in chunks {
-        let pair = pairs.entry(chunk).or_insert(0);
+    for window in windows {
+        println!("{:?}", window);
+        let pair = pairs.entry(window).or_insert(0);
         *pair += 1;
 
         if *pair == 2 { return true; }
@@ -172,6 +153,7 @@ mod tests {
         assert_eq!(super::contains_two_independent_pairs("xxyxx"), true);
         assert_eq!(super::contains_two_independent_pairs("aabcdefgaa"), true);
         assert_eq!(super::contains_two_independent_pairs("aaa"), false);
+        assert_eq!(super::contains_two_independent_pairs("bcaaacb"), false);
     }
 
     #[test]
@@ -183,6 +165,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn is_nice_string_by_new_rules() {
         assert_eq!(super::is_nice_string_by_new_rules("qjhvhtzxzqqjkmpb"), true);
         assert_eq!(super::is_nice_string_by_new_rules("xxyxx"), true);
