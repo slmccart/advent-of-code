@@ -14,8 +14,6 @@ fn main() {
 
     println!("Found {} nice strings", nice_strings);
     println!("Found {} nice strings by the new rules", nice_strings_new_rules);
-
-    contains_letter_sandwich("abcdefeghi");
 }
 
 fn read_input(filename: &str) -> String {
@@ -32,65 +30,46 @@ fn is_nice_string_by_new_rules(s: &str) -> bool {
 }
 
 fn contains_at_least_three_vowels(s: &str) -> bool {
-    let mut num_vowels_found = 0;
-
-    for letter in s.chars() {
-        match letter {
-            'a' | 'e' | 'i' | 'o' | 'u' => num_vowels_found += 1,
-            _ => (),
-        }
-
-        if num_vowels_found == 3 {
-            return true;
-        }
-    }
-
-    false
+    // Any number of characters followed by any vowel - 3 or more times
+    let mut re = Pcre::compile(r"(.*[aeiou]){3,}").unwrap();
+    re.exec(s).is_some()
 }
 
 fn contains_double_letters(s: &str) -> bool {
-    let mut last_letter = ' ';
-
-    for letter in s.chars() {
-        if letter == last_letter {
-            return true;
-        }
-
-        last_letter = letter;
-    }
-
-    false
+    // Any character - repeated once
+    let mut re = Pcre::compile(r"(.)\1").unwrap();
+    re.exec(s).is_some()
 }
 
 fn contains_naughty_substring(s: &str) -> bool {
-    let disallowed_strings = ["ab", "cd", "pq", "xy"];
-
-    for disallowed_string in disallowed_strings.iter() {
-        if s.contains(disallowed_string) {
-            return true;
-        }
-    }
-
-    false
+    let mut re = Pcre::compile(r"ab|cd|pq|xy").unwrap();
+    re.exec(s).is_some()
 }
 
 fn contains_two_independent_pairs(s: &str) -> bool {
+    // Any two characters, followed by any number of characters, then repeat the first group
     let mut re = Pcre::compile(r"(..).*\1").unwrap();
     re.exec(s).is_some()
 }
 
 fn contains_letter_sandwich(s: &str) -> bool {
+    // Any character, followed by any character, then repeat the first group
+    let mut re = Pcre::compile(r"(.).\1").unwrap();
+    re.exec(s).is_some()
+
+    //**** Alternative answer using rolling windows */
+
     //Get an iterator of rolling Windows containing exactly 3 characters each
     // abcdefeghi becomes abc bcd cde def efe ...
-    let characters = s.chars().collect::<Vec<char>>();
-    let windows = characters.windows(3);
+    // let characters = s.chars().collect::<Vec<char>>();
+    // let windows = characters.windows(3);
 
-    for window in windows {
-        //If the window contains the same character in the 1st and 3rd positions, then this string is a letter sandwich
-        if window[0] == window[2] { return true; }
-    }
+    // for window in windows {
+    //     //If the window contains the same character in the 1st and 3rd positions, then this string is a letter sandwich
+    //     if window[0] == window[2] { return true; }
+    // }
 
-    false
+    // false
 }
 
 #[cfg(test)]
