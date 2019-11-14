@@ -1,8 +1,9 @@
 use ndarray::{Array2, s};
 use std::fs;
+use std::cmp::max;
 
 fn main() {
-    let mut grid = Array2::<usize>::zeros((1000, 1000));
+    let mut grid = Array2::<isize>::zeros((1000, 1000));
 
     let commands = read_input("input.txt");
     let commands: Vec<&str> = commands.split('\n').collect();
@@ -11,7 +12,7 @@ fn main() {
         execute_command(&mut grid, command);
     }
 
-    println!("There are {} lights on", grid.sum());
+    println!("The total brightness is {}: ", grid.sum());
 }
 
 fn read_input(filename: &str) -> String {
@@ -23,7 +24,7 @@ fn read_input(filename: &str) -> String {
 //  ex. toggle 461,550 through 564,900
 //      turn off 370,39 through 425,839
 //      turn on 599,989 through 806,993
-fn execute_command(grid: &mut Array2::<usize>, s: &str) {
+fn execute_command(grid: &mut Array2::<isize>, s: &str) {
     let tokens: Vec<&str> = s.split_ascii_whitespace().collect();
 
     match tokens[0] {
@@ -45,25 +46,25 @@ fn tuple_from_comma_separated_numbers(s: &str) -> (usize, usize) {
     (tokens[0].parse::<usize>().unwrap(), tokens[1].parse::<usize>().unwrap())
 }
 
-fn toggle_range(grid: &mut Array2::<usize>, corner1: (usize, usize), corner2: (usize, usize)) {
+fn toggle_range(grid: &mut Array2::<isize>, corner1: (usize, usize), corner2: (usize, usize)) {
     println!("Toggling from {:?} through {:?}", corner1, corner2);
     grid
         .slice_mut(s![corner1.0..corner2.0+1, corner1.1..corner2.1+1])
-        .mapv_inplace(|v| 1-v);
+        .mapv_inplace(|v| v+2);
 }
 
-fn turn_on_range(grid: &mut Array2::<usize>, corner1: (usize, usize), corner2: (usize, usize)) {
+fn turn_on_range(grid: &mut Array2::<isize>, corner1: (usize, usize), corner2: (usize, usize)) {
     println!("Turning on from {:?} through {:?}", corner1, corner2);
     grid
         .slice_mut(s![corner1.0..corner2.0+1, corner1.1..corner2.1+1])
-        .mapv_inplace(|_v| 1);
+        .mapv_inplace(|v| v+1);
 }
 
-fn turn_off_range(grid: &mut Array2::<usize>, corner1: (usize, usize), corner2: (usize, usize)) {
+fn turn_off_range(grid: &mut Array2::<isize>, corner1: (usize, usize), corner2: (usize, usize)) {
     println!("Turning off from {:?} through {:?}", corner1, corner2);
     grid
         .slice_mut(s![corner1.0..corner2.0+1, corner1.1..corner2.1+1])
-        .mapv_inplace(|_v| 0);
+        .mapv_inplace(|v| max(0, v-1));
 }
 
 #[cfg(test)]
