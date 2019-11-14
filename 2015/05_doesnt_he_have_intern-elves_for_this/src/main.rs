@@ -1,5 +1,5 @@
 use std::fs;
-use std::collections::HashMap;
+use pcre::Pcre;
 
 fn main() {
     let strings = read_input("input.txt");
@@ -75,26 +75,8 @@ fn contains_naughty_substring(s: &str) -> bool {
 }
 
 fn contains_two_independent_pairs(s: &str) -> bool {
-    println!("Independent pairs of {}", s);
-    // aaa
-    // Windows(2): aa aa
-
-    //Get an iterator of rolling Windows containing exactly 2 characters each
-    // xxyxx becomes xx xy yx xx
-    let characters = s.chars().collect::<Vec<char>>();
-    let windows = characters.windows(2);
-
-    let mut pairs = HashMap::new();
-
-    for window in windows {
-        println!("{:?}", window);
-        let pair = pairs.entry(window).or_insert(0);
-        *pair += 1;
-
-        if *pair == 2 { return true; }
-    }
-
-    false
+    let mut re = Pcre::compile(r"(..).*\1").unwrap();
+    re.exec(s).is_some()
 }
 
 fn contains_letter_sandwich(s: &str) -> bool {
@@ -165,7 +147,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn is_nice_string_by_new_rules() {
         assert_eq!(super::is_nice_string_by_new_rules("qjhvhtzxzqqjkmpb"), true);
         assert_eq!(super::is_nice_string_by_new_rules("xxyxx"), true);
